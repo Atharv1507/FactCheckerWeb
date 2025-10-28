@@ -6,6 +6,7 @@ import SearchBox from "@/components/search-box"
 import ResultsDisplay from "@/components/results-display"
 import TrendingFakes from "@/components/trending-fakes"
 import EducationGuide from "@/components/education-guide"
+import TrustGuide from "@/components/trust-guide"
 
 export default function Home() {
   const [results, setResults] = useState(null)
@@ -210,6 +211,12 @@ export default function Home() {
           >
             Learn
           </button>
+          <button
+            className={`tab-button ${activeTab === "trust" ? "active" : ""}`}
+            onClick={() => setActiveTab("trust")}
+          >
+            Why Trust Us
+          </button>
         </div>
 
         {activeTab === "checker" ? (
@@ -237,8 +244,10 @@ export default function Home() {
 
             <TrendingFakes fakes={trendingFakes} onRemove={removeFake} />
           </>
-        ) : (
+        ) : activeTab === "education" ? (
           <EducationGuide />
+        ) : (
+          <TrustGuide />
         )}
       </main>
     </div>
