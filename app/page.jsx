@@ -5,6 +5,7 @@ import Header from "@/components/header"
 import SearchBox from "@/components/search-box"
 import ResultsDisplay from "@/components/results-display"
 import TrendingFakes from "@/components/trending-fakes"
+import EducationGuide from "@/components/education-guide"
 
 export default function Home() {
   const [results, setResults] = useState(null)
@@ -12,6 +13,7 @@ export default function Home() {
   const [error, setError] = useState(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [trendingFakes, setTrendingFakes] = useState([])
+  const [activeTab, setActiveTab] = useState("checker")
 
   const fetchTrendingFakes = async () => {
     try {
@@ -195,28 +197,49 @@ export default function Home() {
 
       <Header />
       <main className="main-content">
-        <SearchBox onSearch={handleSearch} loading={loading} />
-        {loading && (
-          <div className="loading-container">
-            <div className="thinking-loader">
-              <div className="thinking-orb"></div>
-              <div className="thinking-waves">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="wave" style={{ "--wave-delay": `${i * 0.3}s` }}></div>
-                ))}
-              </div>
-            </div>
-            <p className="loading-text">Mind is thinking...</p>
-          </div>
-        )}
-        {error && (
-          <div className="error-message">
-            <p>{error}</p>
-          </div>
-        )}
-        {results && <ResultsDisplay results={results} />}
+        <div className="tab-navigation">
+          <button
+            className={`tab-button ${activeTab === "checker" ? "active" : ""}`}
+            onClick={() => setActiveTab("checker")}
+          >
+            Fact Checker
+          </button>
+          <button
+            className={`tab-button ${activeTab === "education" ? "active" : ""}`}
+            onClick={() => setActiveTab("education")}
+          >
+            Learn
+          </button>
+        </div>
 
-        <TrendingFakes fakes={trendingFakes} onRemove={removeFake} />
+        {activeTab === "checker" ? (
+          <>
+            <SearchBox onSearch={handleSearch} loading={loading} />
+            {loading && (
+              <div className="loading-container">
+                <div className="thinking-loader">
+                  <div className="thinking-orb"></div>
+                  <div className="thinking-waves">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="wave" style={{ "--wave-delay": `${i * 0.3}s` }}></div>
+                    ))}
+                  </div>
+                </div>
+                <p className="loading-text">Mind is thinking...</p>
+              </div>
+            )}
+            {error && (
+              <div className="error-message">
+                <p>{error}</p>
+              </div>
+            )}
+            {results && <ResultsDisplay results={results} />}
+
+            <TrendingFakes fakes={trendingFakes} onRemove={removeFake} />
+          </>
+        ) : (
+          <EducationGuide />
+        )}
       </main>
     </div>
   )
