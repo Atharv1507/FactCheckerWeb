@@ -15,32 +15,28 @@ export default function Home() {
 
   const fetchTrendingFakes = async () => {
     try {
-      console.log("[v0] Fetching trending fakes...")
       const response = await fetch("/api/trending-fakes")
 
       if (!response.ok) {
         const text = await response.text()
-        console.error("[v0] Server returned error:", response.status, text)
+        console.error("Server returned error:", response.status, text)
         throw new Error(`Server error: ${response.status}`)
       }
 
       const data = await response.json()
-      console.log("[v0] Received trending fakes:", data.fakes?.length || 0, "items")
 
       if (data.fakes) {
         setTrendingFakes(data.fakes)
-        // Also update localStorage as backup
         localStorage.setItem("trendingFakes", JSON.stringify(data.fakes))
       }
     } catch (error) {
-      console.error("[v0] Failed to fetch trending fakes from server:", error)
-      // Fallback to localStorage if server fails
+      console.error("Failed to fetch trending fakes from server:", error)
       const stored = localStorage.getItem("trendingFakes")
       if (stored) {
         try {
           setTrendingFakes(JSON.parse(stored))
         } catch (e) {
-          console.error("[v0] Failed to parse trending fakes from localStorage")
+          console.error("Failed to parse trending fakes from localStorage")
         }
       }
     }
@@ -53,7 +49,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchTrendingFakes()
-    }, 15000) // Refresh every 15 seconds
+    }, 15000)
 
     return () => clearInterval(interval)
   }, [])
@@ -85,8 +81,7 @@ export default function Home() {
         localStorage.setItem("trendingFakes", JSON.stringify(data.fakes))
       }
     } catch (error) {
-      console.error("[v0] Failed to save trending fake to server:", error)
-      // Fallback to local state update
+      console.error("Failed to save trending fake to server:", error)
       setTrendingFakes((prev) => {
         const exists = prev.some((fake) => fake.claim === claim)
         if (exists) return prev
@@ -118,8 +113,7 @@ export default function Home() {
         localStorage.setItem("trendingFakes", JSON.stringify(data.fakes))
       }
     } catch (error) {
-      console.error("[v0] Failed to remove trending fake from server:", error)
-      // Fallback to local state update
+      console.error("Failed to remove trending fake from server:", error)
       setTrendingFakes((prev) => {
         const updated = prev.filter((_, i) => i !== index)
         localStorage.setItem("trendingFakes", JSON.stringify(updated))
@@ -178,7 +172,7 @@ export default function Home() {
         }
       }
     } catch (err) {
-      console.error("[v0] Client Error:", err.message)
+      console.error("Client Error:", err.message)
 
       let userMessage = err.message
       if (err.message.includes("Failed to fetch")) {
