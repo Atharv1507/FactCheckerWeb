@@ -180,12 +180,29 @@ Be specific about what claims you're fact-checking and why. Focus on factual acc
       }
     } else {
       parts.push({
-        text: `You are a fact-checking expert. Analyze the given claim and provide a streamlined conclusion. Return ONLY a valid JSON object (no markdown, no code blocks) with these exact fields: verdict (true/false/mixed), confidence (0-100 as number), summary (2-3 sentences), key_points (array of 3-4 key findings), sources_needed (array of recommended sources to verify). Be concise and factual.
+        text: `You are a fact-checking expert. Analyze the given claim by searching the web for relevant information and evidence. Provide a streamlined conclusion based on real-time web information. Return ONLY a valid JSON object (no markdown, no code blocks) with these exact fields: verdict (true/false/mixed), confidence (0-100 as number), summary (2-3 sentences), key_points (array of 3-4 key findings with sources), sources_needed (array of recommended sources to verify). Be concise and factual.
 
 Claim to fact-check: "${query}"
 
 Return only the JSON object, nothing else.`,
       })
+    }
+
+    const requestBody = {
+      contents: [
+        {
+          parts: parts,
+        },
+      ],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 1000,
+      },
+      tools: [
+        {
+          googleSearch: {},
+        },
+      ],
     }
 
     const response = await fetchWithRetry(
@@ -196,17 +213,7 @@ Return only the JSON object, nothing else.`,
           "Content-Type": "application/json",
           "x-goog-api-key": apiKey,
         },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: parts,
-            },
-          ],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1000,
-          },
-        }),
+        body: JSON.stringify(requestBody),
       },
     )
 
